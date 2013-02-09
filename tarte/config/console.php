@@ -1,37 +1,51 @@
 <?php
-
-// This is the configuration for yiic console application.
-// Any writable CConsoleApplication properties can be configured here.
 return array(
-	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Console Application',
-
-	// preloading 'log' component
-	'preload'=>array('log'),
-
-	// application components
-	'components'=>array(
-		'db'=>array(
-			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-		),
-		// uncomment the following to use a MySQL database
-		/*
-		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=testdrive',
-			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '',
-			'charset' => 'utf8',
-		),
-		*/
-		'log'=>array(
-			'class'=>'CLogRouter',
-			'routes'=>array(
-				array(
-					'class'=>'CFileLogRoute',
-					'levels'=>'error, warning',
-				),
-			),
-		),
+    'basePath' => __DIR__ . '/..',
+    'name' => 'Tarte/0.1',
+    'preload' => array(
+        'log',
+        'zendHelper',
+    ),
+    'import' => array(
+        'application.models.*',
+        'application.models.Twitter.*',
+        'application.models.Dictionary.*',
+        'application.components.*',
+        'application.components.OAuth.*',
+        'application.components.Twitter.*',
+        'application.vendors.*',
+    ),
+    'components' => array(
+        'db' => array(
+            'connectionString' => 'sqlite:' . dirname(__FILE__) . '/../data/testdrive.db',
+        ),
+        'log' => array(
+            'class' => 'CLogRouter',
+            'routes' => array(
+                array(
+                    'class'  => 'CFileLogRoute',
+                    'levels' => 'error, warning, info, profile',
+                ),
+                array(
+                    'class'  => 'ConsoleLogRoute',
+                    'levels' => 'error, warning, info',
+                ),
+            ),
+        ),
+        'oauth' => array(
+            'class' => 'OAuth',
+            'consumer' => require(__DIR__ . '/oauth.php'),
+        ),
+        'zendHelper' => array(
+            'class' => 'ZendHelper',
+        ),
+        'cliColor' => array(
+            'class' => 'ext.yii-cli-color.components.KCliColor',
+        ),
+    ),
+    'modules' => array(
 	),
+    'params' => array(
+        'accounts' => require(__DIR__ . '/accounts.php'),
+    ),
 );

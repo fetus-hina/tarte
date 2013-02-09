@@ -1,3 +1,15 @@
 [submodule "yii-framework"]
 	path = yii-framework
 	url = git://github.com/yiisoft/yii.git
+[submodule "__sub_modules/zf"]
+	path = __sub_modules/zf
+	url = git://github.com/digital-canvas/zend-framework.git
+[submodule "__sub_modules/yii"]
+	path = __sub_modules/yii
+	url = git://github.com/yiisoft/yii.git
+[submodule "__sub_modules/yii-cli-color"]
+	path = __sub_modules/yii-cli-color
+	url = git://github.com/kevinkorb/yii-cli-color.git
+[submodule "__sub_modules/mb_str_replace"]
+	path = __sub_modules/mb_str_replace
+	url = git://github.com/fetus-hina/mb_str_replace.git
