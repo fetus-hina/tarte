@@ -32,6 +32,7 @@ class TweetFormatter extends CComponent {
     private function textReplace(
         TwUser $user = null, TwStatus $status = null, DictionaryCandidate $candidate
     ) {
+        Yii::log(__METHOD__ . '(): ' . $candidate->text);
         return preg_replace_callback(
             '/\{(.*?)\}/u',
             function (array $match) use ($user, $status, $candidate) {
@@ -39,6 +40,7 @@ class TweetFormatter extends CComponent {
                 $plugin_name = trim(array_shift($parameters));
                 $parameters = array_slice($parameters, 1);
                 $plugin_function = 'plugin_' . $plugin_name;
+                Yii::log(__METHOD__ . '(): Call plugin: ' . $plugin_function, 'info', TweetFormatter::LOGCAT);
                 if(!function_exists($plugin_function)) {
                     $plugin_file = $plugin_name . '.plugin.php';
                     $plugin_pathes = array(__DIR__ . '/../tartePlugins/' . $plugin_file); // FIXME: user plugin
