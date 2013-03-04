@@ -38,7 +38,6 @@ class TweetFormatter extends CComponent {
             function (array $match) use ($user, $status, $candidate) {
                 $parameters = explode(':', $match[1]);
                 $plugin_name = trim(array_shift($parameters));
-                $parameters = array_slice($parameters, 1);
                 $plugin_function = 'plugin_' . $plugin_name;
                 Yii::log(__METHOD__ . '(): Call plugin: ' . $plugin_function, 'info', TweetFormatter::LOGCAT);
                 if(!function_exists($plugin_function)) {
