@@ -98,7 +98,7 @@ class DictionaryMatchInfo extends CComponent {
         case self::TYPE_RANDOM:         echo "ランダムツイート\n"; break;
         case self::TYPE_REPLY:          echo "リプライ反応\n"; break;
         case self::TYPE_TIMELINE:       echo "タイムライン反応\n"; break;
-        case self::TYPE_THANK_FOLLOW:   echo "フォローありがとう\n"; break;
+        case self::TYPE_THANKS_FOLLOW:  echo "フォローありがとう\n"; break;
         default:                        echo "不明(エラー)\n"; break;
         }
         echo "{$prefix}  時間帯: ";
