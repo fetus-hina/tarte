@@ -381,11 +381,11 @@ class TwitterUserStream extends CComponent {
     }
 
     private function onUserUnfollowsSomeone(TwUser $user) {
-        $this->raiseEvent('onUserUnfollowsSomeone', new TwitterEvent($this, $target));
+        $this->raiseEvent('onUserUnfollowsSomeone', new TwitterEvent($this, $user));
     }
 
     private function onUserIsUnfollowed(TwUser $user) {
-        $this->raiseEvent('onUserIsUnfollowed', new TwitterEvent($this, $source));
+        $this->raiseEvent('onUserIsUnfollowed', new TwitterEvent($this, $user));
     }
 
     private function onListCreated(array $json) {
