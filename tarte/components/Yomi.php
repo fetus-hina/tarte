@@ -57,7 +57,7 @@ class Yomi extends CComponent {
     }
 
     private function callMecab() {
-        $cmdline = '/usr/bin/env mecab';
+        $cmdline = '/usr/bin/env ' . escapeshellarg(Yii::app()->params['mecab']);
         $descriptorspec = array(
             array('pipe', 'r'),
             array('pipe', 'w'),

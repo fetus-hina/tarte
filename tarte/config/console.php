@@ -46,6 +46,7 @@ return array(
     'modules' => array(
 	),
     'params' => array(
-        'accounts' => require(__DIR__ . '/accounts.php'),
+        'mecab'     => '/usr/local/bin/mecab',
+        'accounts'  => require(__DIR__ . '/accounts.php'),
     ),
 );
