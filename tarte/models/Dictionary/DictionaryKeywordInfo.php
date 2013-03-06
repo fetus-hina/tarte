@@ -30,7 +30,7 @@ class DictionaryKeywordInfo extends CComponent {
             return stripos($status->parsed->text, $this->text) !== false;
 
         case self::MATCH_REGEX:
-            return @preg_match($status->parsed->text, $status->text);
+            return @preg_match($this->text, $status->parsed->text);
 
         case self::MATCH_WAKACHI:
             // 前後のスペースは単語の途中からマッチさせないように
