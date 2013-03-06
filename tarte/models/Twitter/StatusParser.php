@@ -1,6 +1,6 @@
 <?php
 class StatusParser extends CComponent {
-    const LOGCAT = 'tarte.tweet.parser';
+    const LOGCAT = 'tarte.StatusParser';
 
     private $text, $reply_to, $has_mension, $retweet;
     private $wakachi;
@@ -69,10 +69,10 @@ class StatusParser extends CComponent {
 		}
         $this->text = trim($text);
 
-        Yii::log('StatusParser:', 'info', self::LOGCAT);
-        Yii::log('    text:         ' . $this->text, 'info', self::LOGCAT);
-        Yii::log('    reply_to:     ' . implode(', ', $this->reply_to), 'info', self::LOGCAT);
-        Yii::log('    retweet:      ' . $this->retweet, 'info', self::LOGCAT);
-        Yii::log('    has_mension?: ' . ($this->has_mension ? 'Yes' : 'No'), 'info', self::LOGCAT);
+        // Yii::log('StatusParser:', 'info', self::LOGCAT);
+        // Yii::log('    text:         ' . $this->text, 'info', self::LOGCAT);
+        // Yii::log('    reply_to:     ' . implode(', ', $this->reply_to), 'info', self::LOGCAT);
+        // Yii::log('    retweet:      ' . $this->retweet, 'info', self::LOGCAT);
+        // Yii::log('    has_mension?: ' . ($this->has_mension ? 'Yes' : 'No'), 'info', self::LOGCAT);
     }
 }
