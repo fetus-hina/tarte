@@ -1,10 +1,15 @@
 <?php
 class TwitterUserStream extends CComponent {
-    private $screen_name, $id, $socket;
+    const WATCHDOG_TIMEOUT = 1200;
+    private $screen_name, $id, $socket, $watchdog;
 
     public function __construct($screen_name) {
         $this->screen_name = $screen_name;
         $this->id = $this->getUserId();
+    }
+
+    public function __destruct() {
+        $this->close();
     }
 
     public function getScreenName() {
@@ -23,10 +28,16 @@ class TwitterUserStream extends CComponent {
             $this->open();
         }
         $is_idle = false;
+        $this->watchdog = microtime(true);
         while(true) {
             if($this->dispatch()) {
                 $is_idle = false;
+                $this->watchdog = microtime(true);
                 continue;
+            }
+            if(microtime(true) - $this->watchdog >= self::WATCHDOG_TIMEOUT) {
+                $this->onWatchdogTimeout();
+                break;
             }
             if($is_idle) {
                 $this->onIdling();
@@ -254,6 +265,11 @@ class TwitterUserStream extends CComponent {
     private function onIdleStart() {
         Yii::trace(__METHOD__, 'twitter');
         $this->raiseEvent('onIdleStart', new TwitterEvent($this));
+    }
+
+    private function onWatchdogTimeout() {
+        Yii::trace(__METHOD__, 'twitter');
+        $this->raiseEvent('onWatchdogTimeout', new TwitterEvent($this));
     }
 
     private function onStatus(array $json) {

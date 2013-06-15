@@ -71,6 +71,8 @@ class TarteCommand extends CConsoleCommand {
                     usleep($retry_wait_usec);
                 }
             }
+            unset($client);
+            unset($handler);
         }
     }
 
