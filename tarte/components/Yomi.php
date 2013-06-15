@@ -3,9 +3,12 @@ class Yomi extends CComponent {
     private $text;
     private $kana, $voice, $parsed = false;
 
-    public function __construct($text) {
+    public function __construct($text, $normalize = true) {
         $text = Normalizer::normalize($text);
-        $text = mb_convert_kana($text, 'asKV', 'UTF-8'); // オフィシャルの辞書は半角で入ってないので変えた方が良いかな－
+        if($normalize) {
+            // オフィシャルの辞書は半角で入ってないので変えた方が良いかな－
+            $text = mb_convert_kana($text, 'asKV', 'UTF-8');
+        }
         $text = preg_replace('/[[:space:]]+/', ' ', $text);
         $text = trim($text);
         $this->text = $text;

@@ -3,9 +3,12 @@ class Wakachi extends CComponent {
     private $text;
     private $wakachi, $original;
 
-    public function __construct($text) {
+    public function __construct($text, $normalize = true) {
         $text = Normalizer::normalize($text);
-        $text = mb_convert_kana($text, 'asKV', 'UTF-8'); // オフィシャルの辞書は半角で入ってないので変えた方が良いかな－
+        if($normalize) {
+            // オフィシャルの辞書は半角で入ってないので変えた方が良いかな－
+            $text = mb_convert_kana($text, 'asKV', 'UTF-8');
+        }
         $text = preg_replace('/[[:space:]]+/', ' ', $text);
         $text = trim($text);
         $this->text = $text;
@@ -18,14 +21,14 @@ class Wakachi extends CComponent {
         if(!$this->wakachi) {
             $this->parse();
         }
-        return implode($delim, $this->wakachi);
+        return is_null($delim) ? $this->wakachi : implode($delim, $this->wakachi);
     }
 
     public function getOriginal($delim = ' ') {
         if(!$this->original) {
             $this->parse();
         }
-        return implode($delim, $this->original);
+        return is_null($delim) ? $this->original : implode($delim, $this->original);
     }
 
     private function parse() {
