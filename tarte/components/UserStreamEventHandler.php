@@ -3,6 +3,7 @@ class UserStreamEventHandler extends CComponent {
     const LOGCAT = 'tarte.UserStreamEventHandler';
     private $screen_name;
     private $next_voluntary, $voluntary_min, $voluntary_max;
+    private $malkov_target_id;
 
     public function __construct($screen_name) {
         $this->screen_name = $screen_name;
@@ -24,6 +25,9 @@ class UserStreamEventHandler extends CComponent {
             $this->voluntary_max = $this->voluntary_min + mt_rand(30, 90) * 60;
         }
         Yii::log(__METHOD__ . '(): 自発的ツイート間隔: ' . $this->voluntary_min . '～' . $this->voluntary_max, 'info', self::LOGCAT);
+        if($tmp = $config->malkov) {
+            $this->malkov_target_id = $config->malkov['target'];
+        }
     }
 
     public function onAfterConnect($e) {
@@ -52,10 +56,21 @@ class UserStreamEventHandler extends CComponent {
         if($status->id === null || $user->id === null) {
             return;
         }
-        if($user->id == $e->sender->getUserId()) {
-            // 自分のツイート
-            //TODO: マルコフ連鎖処理
-            return;
+
+        // マルコフ連鎖用記録処理
+        if($this->malkov_target_id && $user->id == $this->malkov_target_id) {
+            try {
+                $parsed = $status->parsed;
+                $text   = trim($parsed->text);
+                if($text != '' && stripos($text, 'http://') === false && stripos($text, 'https://') === false) {
+                    MalkovChain::saveText(
+                        $this->screen_name,
+                        $parsed->hasMension(),
+                        $text
+                    );
+                }
+            } catch(Exception $e) {
+            }
         }
 
         // 別プロセスでツイート処理

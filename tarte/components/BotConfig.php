@@ -2,7 +2,8 @@
 class BotConfig extends CComponent {
     const LOGCAT = 'tarte.BotConfig';
 
-    private $oauth, $voluntary, $dictionary;
+    static private $instance;
+    private $screen_name, $oauth, $voluntary, $dictionary, $malkov;
 
     static public function factory($screen_name) {
         if(!preg_match('/^[[:alnum:]_]{1,15}$/', $screen_name)) {
@@ -15,15 +16,25 @@ class BotConfig extends CComponent {
             Yii::log(__METHOD__ . '(): コンフィグファイルが読み込めません: '. $config_file, 'error', self::LOGCAT);
             throw new CException(__METHOD__ . '(): コンフィグファイルが読み込めません: '. $config_file);
         }
-        return Yii::createComponent(
+        self::$instance = Yii::createComponent(
             array_merge(
                 array('class' => __CLASS__),
                 require(__DIR__ . '/../../users/' . $screen_name . '/config.php')
             )
         );
+        self::$instance->screen_name = $screen_name;
+        return self::$instance;
+    }
+
+    static public function getInstance() {
+        return self::$instance;
     }
 
     public function init() {
+    }
+
+    public function getScreenName() {
+        return $this->screen_name;
     }
 
     public function setOAuth($conf) {
@@ -54,5 +65,13 @@ class BotConfig extends CComponent {
 
     public function getDictionary() {
         return $this->dictionary;
+    }
+
+    public function setMalkov(array $conf) {
+        $this->malkov = $conf;
+    }
+
+    public function getMalkov() {
+        return $this->malkov;
     }
 }
