@@ -40,6 +40,12 @@ return array(
             'class' => 'OAuth',
             'consumer' => require(__DIR__ . '/oauth.php'),
         ),
+        'wakuflow' => array(
+            'class' => 'Wakuflow',
+            'path' => 'application.vendors.wakuflow',
+            'exec' => 'wakuflow',
+            'font' => 'font.otf',
+        ),
         'zendHelper' => array(
             'class' => 'ZendHelper',
         ),
@@ -52,5 +58,6 @@ return array(
     'params' => array(
         'mecab'     => '/usr/local/bin/mecab',
         'accounts'  => require(__DIR__ . '/accounts.php'),
+        'twitpic'   => require(__DIR__ . '/twitpic.php'),
     ),
 );
