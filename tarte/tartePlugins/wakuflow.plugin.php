@@ -34,8 +34,24 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         unset($resp);
         unset($client);
 
+        $commands = array();
+        if(!preg_match_all('/新枠|中破/', $status->parsed->text, $matches, PREG_SET_ORDER)) {
+            @unlink($tmp_out);
+            @unlink($tmp_in);
+            return '(わーくフローの解析に失敗)';
+        }
+        foreach($matches as $match) {
+            switch($match[0]) {
+            case '新枠':
+                $commands[] = 'waku_v2 ' . $status->user->screen_name;
+                break;
+            case '中破':
+                $commands[] = 'kankore_half_damage';
+                break;
+            }
+        }
         $wakuflow = Yii::app()->wakuflow;
-        if(!$wakuflow->proc($tmp_in, $tmp_out, 'waku_v2 ' . $status->user->screen_name)) {
+        if(!$wakuflow->proc($tmp_in, $tmp_out, implode("\n", $commands))) {
             @unlink($tmp_out);
             @unlink($tmp_in);
             return '(わーくフローの処理に失敗)';
