@@ -35,7 +35,7 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         unset($client);
 
         $commands = array();
-        if(!preg_match_all('/新枠|中破/', $status->parsed->text, $matches, PREG_SET_ORDER)) {
+        if(!preg_match_all('/新枠|中破|大破/', $status->parsed->text, $matches, PREG_SET_ORDER)) {
             @unlink($tmp_out);
             @unlink($tmp_in);
             return '(わーくフローの解析に失敗)';
@@ -47,6 +47,9 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
                 break;
             case '中破':
                 $commands[] = 'kankore_half_damage';
+                break;
+            case '大破':
+                $commands[] = 'kankore_badly_damage';
                 break;
             }
         }
