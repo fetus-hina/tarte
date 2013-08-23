@@ -35,7 +35,7 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         unset($client);
 
         $commands = array();
-        if(!preg_match_all('/新枠|モノクロ|白黒|セピア|中破|大破/', $status->parsed->text, $matches, PREG_SET_ORDER)) {
+        if(!preg_match_all('/新枠|ろまのふ|モノクロ|白黒|セピア|中破|大破/', $status->parsed->text, $matches, PREG_SET_ORDER)) {
             @unlink($tmp_out);
             @unlink($tmp_in);
             return '(わーくフローの解析に失敗)';
@@ -44,6 +44,9 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             switch($match[0]) {
             case '新枠':
                 $commands[] = 'waku_v2 ' . $status->user->screen_name;
+                break;
+            case 'ろまのふ':
+                $commands[] = 'romanov';
                 break;
             case 'モノクロ':
             case '白黒':
