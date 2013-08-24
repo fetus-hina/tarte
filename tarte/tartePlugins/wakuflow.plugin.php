@@ -56,6 +56,7 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             'シャープ'  => 'sharpen',
             'エッジ'    => 'edge',
             'エッヂ'    => 'edge',
+            'エンボス'  => 'emboss',
             '半額'      => 'half_price',
             '中破'      => 'kankore_half_damage',
             '大破'      => 'kankore_badly_damage',
