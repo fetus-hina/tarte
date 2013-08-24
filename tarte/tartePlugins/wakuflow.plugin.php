@@ -60,6 +60,13 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             '半額'      => 'half_price',
             '中破'      => 'kankore_half_damage',
             '大破'      => 'kankore_badly_damage',
+            '集中線1'   => 'shuchusen1',
+            '集中線黒'  => 'shuchusen1',
+            '集中線2'   => 'shuchusen2',
+            '集中線白'  => 'shuchusen2',
+            '集中線3'   => 'shuchusen3',
+            '集中線緑'  => 'shuchusen3',
+            '集中線'    => function() { return mt_rand(0, 1) == 0 ? 'shuchusen1' : 'shuchusen2'; },
         );
 
         // 正規表現生成のために長い順に並べる
@@ -88,6 +95,13 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             $done = false;
             foreach($simple_wakuflow_map as $wakuflow_ja => $wakuflow_cmd) {
                 if($match[0] === $wakuflow_ja) {
+                    if(!is_string($wakuflow_cmd)) {
+                        if(is_callable($wakuflow_cmd)) {
+                            $wakuflow_cmd = $wakuflow_cmd();
+                        } else {
+                            $wakuflow_cmd = '';
+                        }
+                    }
                     $commands[] = $wakuflow_cmd;
                     $done = true;
                     break;
