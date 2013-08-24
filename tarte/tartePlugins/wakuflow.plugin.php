@@ -35,7 +35,7 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         unset($client);
 
         $commands = array();
-        if(!preg_match_all('/新枠|ろまのふ|モノクロ|白黒|セピア|(?:2|二)値化|(?:8|八)色|色反転|ネガ|ぼかし|シャープ|上下反転|左右反転|半額|中破|大破/u', $status->parsed->text, $matches, PREG_SET_ORDER)) {
+        if(!preg_match_all('/新枠|ろまのふ|モノクロ|白黒|セピア|(?:2|二)値化|(?:8|八)色|色反転|ネガ|ぼかし|シャープ|上下反転|左右反転|左回転|右回転|半回転|半額|中破|大破/u', $status->parsed->text, $matches, PREG_SET_ORDER)) {
             @unlink($tmp_out);
             @unlink($tmp_in);
             return '(わーくフローの解析に失敗)';
@@ -75,6 +75,15 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
                 break;
             case '左右反転':
                 $commands[] = 'flip horizontal';
+                break;
+            case '左回転':
+                $commands[] = 'rotate 90';
+                break;
+            case '半回転':
+                $commands[] = 'rotate 180';
+                break;
+            case '右回転':
+                $commands[] = 'rotate 270';
                 break;
             case 'シャープ':
                 $commands[] = 'sharpen';
