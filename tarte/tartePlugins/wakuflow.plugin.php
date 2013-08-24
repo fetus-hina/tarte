@@ -84,9 +84,12 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
 
         // シンプルなわーくフローのための正規表現(パーツ)
         $simple_wakuflow_regex = implode('|', array_map(function($a){return preg_quote($a, '/');}, array_keys($simple_wakuflow_map)));
+        
+        // モザイク
+        $pixelate_regex = 'モザイク\s*(\d+)?';
 
         $commands = array();
-        if(!preg_match_all('/' . $simple_wakuflow_regex . '/u', $status->parsed->text, $matches, PREG_SET_ORDER)) {
+        if(!preg_match_all("/{$pixelate_regex}|{$simple_wakuflow_regex}/u", $status->parsed->text, $matches, PREG_SET_ORDER)) {
             @unlink($tmp_out);
             @unlink($tmp_in);
             return '(わーくフローの解析に失敗)';
@@ -109,7 +112,11 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             }
 
             if(!$done) {
-                //TODO: 凝ったことをするコマンドの処理
+                // モザイク
+                if(preg_match("/^{$pixelate_regex}$/u", $match[0], $smatch)) {
+                    $size = isset($smatch[1]) ? min(99, max(1, (int)$smatch[1])) : 15;
+                    $commands[] = "pixelate {$size}";
+                }
             }
         }
         $wakuflow = Yii::app()->wakuflow;
