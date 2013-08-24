@@ -35,7 +35,7 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         unset($client);
 
         $commands = array();
-        if(!preg_match_all('/新枠|ろまのふ|モノクロ|白黒|セピア|(?:2|二)値化|(?:8|八)色|色反転|ネガ|中破|大破/u', $status->parsed->text, $matches, PREG_SET_ORDER)) {
+        if(!preg_match_all('/新枠|ろまのふ|モノクロ|白黒|セピア|(?:2|二)値化|(?:8|八)色|色反転|ネガ|半額|中破|大破/u', $status->parsed->text, $matches, PREG_SET_ORDER)) {
             @unlink($tmp_out);
             @unlink($tmp_in);
             return '(わーくフローの解析に失敗)';
@@ -66,6 +66,9 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             case '色反転':
             case 'ネガ':
                 $commands[] = 'negate';
+                break;
+            case '半額':
+                $commands[] = 'half_price';
                 break;
             case '中破':
                 $commands[] = 'kankore_half_damage';
