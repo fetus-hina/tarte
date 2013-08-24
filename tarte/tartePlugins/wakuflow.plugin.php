@@ -34,69 +34,65 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         unset($resp);
         unset($client);
 
+        // 凝ったことが必要ないシンプルなわーくフローと wakuflow コマンドの一覧
+        $simple_wakuflow_map = array(
+            '新枠'      => 'waku_v2 ' . $status->user->screen_name,
+            'ろまのふ'  => 'romanov',
+            'モノクロ'  => 'grayscale',
+            '白黒'      => 'grayscale',
+            'セピア'    => 'sepia',
+            '二値化'    => 'binarize',
+            '2値化'     => 'binarize',
+            '八色'      => '8colors',
+            '8色'       => '8colors',
+            '色反転'    => 'negate',
+            'ネガ'      => 'negate',
+            'ぼかし'    => 'gaussian_blur',
+            '上下反転'  => 'flip vertical',
+            '左右反転'  => 'flip horizontal',
+            '左回転'    => 'rotate 90',
+            '半回転'    => 'rotate 180',
+            '右回転'    => 'rotate 270',
+            'シャープ'  => 'sharpen',
+            '半額'      => 'half_price',
+            '中破'      => 'kankore_half_damage',
+            '大破'      => 'kankore_badly_damage',
+        );
+
+        // 正規表現生成のために長い順に並べる
+        uksort(
+            $simple_wakuflow_map,
+            function ($a, $b) {
+                $la = mb_strlen($a, 'UTF-8');
+                $lb = mb_strlen($b, 'UTF-8');
+                if($la != $lb) {
+                    return $la < $lb ? 1 : -1;
+                }
+                return strnatcasecmp($a, $b);
+            }
+        );
+
+        // シンプルなわーくフローのための正規表現(パーツ)
+        $simple_wakuflow_regex = implode('|', array_map(function($a){return preg_quote($a, '/');}, array_keys($simple_wakuflow_map)));
+
         $commands = array();
-        if(!preg_match_all('/新枠|ろまのふ|モノクロ|白黒|セピア|(?:2|二)値化|(?:8|八)色|色反転|ネガ|ぼかし|シャープ|上下反転|左右反転|左回転|右回転|半回転|半額|中破|大破/u', $status->parsed->text, $matches, PREG_SET_ORDER)) {
+        if(!preg_match_all('/' . $simple_wakuflow_regex . '/u', $status->parsed->text, $matches, PREG_SET_ORDER)) {
             @unlink($tmp_out);
             @unlink($tmp_in);
             return '(わーくフローの解析に失敗)';
         }
         foreach($matches as $match) {
-            switch($match[0]) {
-            case '新枠':
-                $commands[] = 'waku_v2 ' . $status->user->screen_name;
-                break;
-            case 'ろまのふ':
-                $commands[] = 'romanov';
-                break;
-            case 'モノクロ':
-            case '白黒':
-                $commands[] = 'grayscale';
-                break;
-            case 'セピア':
-                $commands[] = 'sepia';
-                break;
-            case '二値化':
-            case '2値化':
-                $commands[] = 'binarize';
-                break;
-            case '八色':
-            case '8色':
-                $commands[] = '8colors';
-                break;
-            case '色反転':
-            case 'ネガ':
-                $commands[] = 'negate';
-                break;
-            case 'ぼかし':
-                $commands[] = 'gaussian_blur';
-                break;
-            case '上下反転':
-                $commands[] = 'flip vertical';
-                break;
-            case '左右反転':
-                $commands[] = 'flip horizontal';
-                break;
-            case '左回転':
-                $commands[] = 'rotate 90';
-                break;
-            case '半回転':
-                $commands[] = 'rotate 180';
-                break;
-            case '右回転':
-                $commands[] = 'rotate 270';
-                break;
-            case 'シャープ':
-                $commands[] = 'sharpen';
-                break;
-            case '半額':
-                $commands[] = 'half_price';
-                break;
-            case '中破':
-                $commands[] = 'kankore_half_damage';
-                break;
-            case '大破':
-                $commands[] = 'kankore_badly_damage';
-                break;
+            $done = false;
+            foreach($simple_wakuflow_map as $wakuflow_ja => $wakuflow_cmd) {
+                if($match[0] === $wakuflow_ja) {
+                    $commands[] = $wakuflow_cmd;
+                    $done = true;
+                    break;
+                }
+            }
+
+            if(!$done) {
+                //TODO: 凝ったことをするコマンドの処理
             }
         }
         $wakuflow = Yii::app()->wakuflow;
