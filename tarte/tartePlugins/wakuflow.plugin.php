@@ -46,6 +46,7 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             '八色'          => '8colors',
             '8色'           => '8colors',
             'ウェブセーフ'  => 'websafe',
+            'ファミコン'    => 'famicom',
             '色反転'        => 'negate',
             'ネガ'          => 'negate',
             'ぼかし'        => 'gaussian_blur',
