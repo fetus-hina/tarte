@@ -2,6 +2,7 @@
 class TwitterUserStream extends CComponent {
     const WATCHDOG_TIMEOUT = 1200;
     private $screen_name, $id, $socket, $watchdog;
+    private $is_chunked = false, $chunk_buffer = '';
 
     public function __construct($screen_name) {
         $this->screen_name = $screen_name;
@@ -121,6 +122,37 @@ class TwitterUserStream extends CComponent {
         return fgets($this->socket);
     }
 
+    private function readBodyLine() {
+        if(!$this->is_chunked) {
+            return $this->readline();
+        }
+        while(strpos($this->chunk_buffer, "\x0d\x0a") === false) {
+            $chunk_size_hex = trim($this->readline());
+            if(substr($chunk_size_hex, 0, 1) === '0') { // last-chunk = 1*("0") [ chunk-extension ] CRLF
+                throw new CException('ストリームの終端に達しました');
+            }
+            if(!preg_match('/^([[:xdigit:]]+)(?:$|;)/', $chunk_size_hex, $match)) { // chunk-size [ chunk-extension ] CRLF
+                throw new CException('チャンクサイズが不正な形式です');
+            }
+            $tmp = fread($this->socket, hexdec($match[1]));
+            if($tmp === false) {
+                throw new CException('ソケットから読み込めません。接続が閉じられた?');
+            }
+            if(strlen($tmp) !== hexdec($match[1])) {
+                throw new CException('ソケットから読み込めません。接続が閉じられた?');
+            }
+            $this->chunk_buffer .= $tmp;
+            if(fread($this->socket, 2) !== "\x0d\x0a") {
+                throw new CException('チャンク終端が一致しません');
+            }
+        }
+        if(!preg_match('/^.*?(?:\x0d\x0a|\x0d|\x0a)/', $this->chunk_buffer, $match)) {
+            throw new CException('BUG: 改行が見つからない');
+        }
+        $this->chunk_buffer = substr($this->chunk_buffer, strlen($match[0]));
+        return $match[0];
+    }
+
     private function isSocketReadable($timeout_usec = null) {
         if(is_null($timeout_usec)) {
             $timeout_usec = mt_rand(1 * 1000 * 1000, 2 * 1000 * 1000);
@@ -142,6 +174,7 @@ class TwitterUserStream extends CComponent {
         if(!$resp->isSuccessful()) {
             throw new CException('ストリームに接続できません');
         }
+        $this->is_chunked = stripos($resp->getHeader('Transfer-Encoding'), 'chunked') !== false;
         $this->onAfterHandshake();
     }
 
@@ -157,7 +190,7 @@ class TwitterUserStream extends CComponent {
     private function buildRequestHeaders($uri) {
         $ret = array();
         $path = $uri->getPath() . ($uri->getQuery() != '' ? '?' . $uri->getQuery() : '');
-        $ret[] = sprintf('GET %s HTTP/1.0', $path); //FIXME: HTTP/1.1
+        $ret[] = sprintf('GET %s HTTP/1.1', $path);
 
         $host = strtolower($uri->getHost());
         $port = (int)$uri->getPort();
@@ -196,7 +229,7 @@ class TwitterUserStream extends CComponent {
         if(!$this->isSocketReadable()) {
             return false;
         }
-        $line = trim($this->readline());
+        $line = trim($this->readBodyLine());
         if($line === '') {
             return false;
         }
