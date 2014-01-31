@@ -111,7 +111,6 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             '集中線3'           => 'shuchusen3',
             '集中線緑'          => 'shuchusen3',
             '集中線'            => function() { return mt_rand(0, 1) == 0 ? 'shuchusen1' : 'shuchusen2'; },
-            'ごはん'            => sprintf('animal %s %s', $animal_text($status->user->name), $animal_text('@' . $status->user->screen_name)),
         );
 
         // 正規表現生成のために長い順に並べる
@@ -130,11 +129,11 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         // シンプルなわーくフローのための正規表現(パーツ)
         $simple_wakuflow_regex = implode('|', array_map(function($a){return preg_quote($a, '/');}, array_keys($simple_wakuflow_map)));
         
-        // モザイク
         $pixelate_regex = 'モザイク\s*(\d+)?';
+        $animal_regex = 'ごはん\s*(?:「(.+?)」\s*「(.+?)」)?';
 
         $commands = array();
-        if(!preg_match_all("/{$pixelate_regex}|{$simple_wakuflow_regex}/u", $status->parsed->text, $matches, PREG_SET_ORDER)) {
+        if(!preg_match_all("/{$pixelate_regex}|{$animal_regex}|{$simple_wakuflow_regex}/u", $status->parsed->text, $matches, PREG_SET_ORDER)) {
             @unlink($tmp_out);
             @unlink($tmp_in);
             return '(わーくフローの解析に失敗)';
@@ -157,10 +156,15 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             }
 
             if(!$done) {
-                // モザイク
                 if(preg_match("/^{$pixelate_regex}$/u", $match[0], $smatch)) {
+                    // モザイク
                     $size = isset($smatch[1]) ? min(99, max(1, (int)$smatch[1])) : 15;
                     $commands[] = "pixelate {$size}";
+                } elseif(preg_match("/^{$animal_regex}$/u", $match[0], $smatch)) {
+                    // ごはんじゃない
+                    $text1 = isset($smatch[1]) ? $smatch[1] : $status->user->name;
+                    $text2 = isset($smatch[2]) ? $smatch[2] : ('@' . $status->user->screen_name);
+                    $commands[] = 'animal ' . $animal_text($text1) . ' ' . $animal_text($text2);
                 }
             }
         }
