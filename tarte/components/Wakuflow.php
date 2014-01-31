@@ -3,6 +3,8 @@ class Wakuflow extends CComponent {
     public $path; // pathalias
     public $exec; // $path/$exec
     public $font; // $path/$font
+    public $font2; // $path/$font
+    public $font3; // $path/$font
 
     public function init() {
     }
@@ -15,11 +17,13 @@ class Wakuflow extends CComponent {
         );
         $handle = @proc_open(
             sprintf(
-                '/usr/bin/env %s --input=%s --output=%s --font=%s',
+                '/usr/bin/env %s --input=%s --output=%s --font=%s --font2=%s --font3=%s',
                 escapeshellarg($this->getExecutablePath()),
                 escapeshellarg($in_file),
                 escapeshellarg($out_file),
-                escapeshellarg($this->getFontPath())
+                escapeshellarg($this->getFontPath()),
+                escapeshellarg($this->getFont2Path()),
+                escapeshellarg($this->getFont3Path())
             ),
             $descriptorspec, $pipes
         );
@@ -37,5 +41,13 @@ class Wakuflow extends CComponent {
 
     private function getFontPath() {
         return Yii::getPathOfAlias($this->path) . '/' . $this->font;
+    }
+
+    private function getFont2Path() {
+        return Yii::getPathOfAlias($this->path) . '/' . $this->font2;
+    }
+
+    private function getFont3Path() {
+        return Yii::getPathOfAlias($this->path) . '/' . $this->font3;
     }
 }

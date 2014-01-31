@@ -45,6 +45,8 @@ return array(
             'path' => 'application.vendors.wakuflow',
             'exec' => 'wakuflow',
             'font' => 'font.otf',
+            'font2' => 'animal.ttf',
+            'font3' => 'animal.ttf',
         ),
         'zendHelper' => array(
             'class' => 'ZendHelper',

@@ -34,6 +34,12 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         unset($resp);
         unset($client);
 
+        $animal_text = function($text) {
+            $animal_text = trim(mb_convert_kana($text, 'asKV', 'UTF-8'));
+            $animal_text = preg_replace('/[[:space:]]+/', ' ', $animal_text);
+            return preg_replace('/([[:space:]\'"\\\\])/', "\\\\$1", $animal_text);
+        };
+
         // 凝ったことが必要ないシンプルなわーくフローと wakuflow コマンドの一覧
         $simple_wakuflow_map = array(
             '新枠'              => 'waku_v2 ' . $status->user->screen_name,
@@ -105,6 +111,7 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
             '集中線3'           => 'shuchusen3',
             '集中線緑'          => 'shuchusen3',
             '集中線'            => function() { return mt_rand(0, 1) == 0 ? 'shuchusen1' : 'shuchusen2'; },
+            'ごはん'            => sprintf('animal %s %s', $animal_text($status->user->name), $animal_text('@' . $status->user->screen_name)),
         );
 
         // 正規表現生成のために長い順に並べる
