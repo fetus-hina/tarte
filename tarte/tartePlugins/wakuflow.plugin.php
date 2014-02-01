@@ -36,7 +36,7 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
 
         $animal_text = function($text) {
             $animal_text = trim(mb_convert_kana($text, 'asKV', 'UTF-8'));
-            $animal_text = preg_replace('/[[:space:]]+/', ' ', $animal_text);
+            $animal_text = preg_replace('/[\x00-\x20\x7f]+/', ' ', $animal_text);
             return preg_replace('/([[:space:]\'"\\\\])/', "\\\\$1", $animal_text);
         };
 
@@ -162,8 +162,9 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
                     $commands[] = "pixelate {$size}";
                 } elseif(preg_match("/^{$animal_regex}$/u", $match[0], $smatch)) {
                     // ごはんじゃない
-                    $text1 = isset($smatch[1]) ? $smatch[1] : $status->user->name;
-                    $text2 = isset($smatch[2]) ? $smatch[2] : ('@' . $status->user->screen_name);
+                    $text1 = isset($smatch[1]) ? $smatch[1] : sprintf('%sはあなたのごはんじゃない。', $status->user->name);
+                    $text2 = isset($smatch[2]) ? $smatch[2] : sprintf('@%s is not your food prodcts.', $status->user->screen_name);
+                    //                                                                      ^^^^^^^ オリジナルに忠実
                     $commands[] = 'animal ' . $animal_text($text1) . ' ' . $animal_text($text2);
                 }
             }
