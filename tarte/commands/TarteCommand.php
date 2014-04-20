@@ -106,6 +106,10 @@ class TarteCommand extends CConsoleCommand {
             //Yii::log(__METHOD__ . '(): retweet データが含まれるので無視', 'info', self::LOGCAT);
             return 0;
         }
+        if(preg_match('!\bhttps?://!', $status->text)) {
+            //Yii::log(__METHOD__ . '(): URLを含むので無視', 'info', self::LOGCAT);
+            return 0;
+        }
         if($parsed->hasMension()) {
             if(!$parsed->isInReplyTo($screen_name)) {
                 //Yii::log(__METHOD__ . '(): 他人へのリプライ', 'info', self::LOGCAT);
