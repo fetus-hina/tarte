@@ -85,6 +85,25 @@ class TarteCommand extends CConsoleCommand {
             Yii::log(__METHOD__ . '(): user が TwUser のインスタンスでない', 'error', self::LOGCAT);
             return 1;
         }
+        if($user->protected) {
+            Yii::log(__METHOD__ . '(): user が protected なのでフォローしません', 'error', self::LOGCAT);
+            return 1;
+        }
+
+        $blacklist = array(
+            'followback', 'follow back', 'followme', 'follow me', 'sougofollow',
+            '相互フォロー', '相互100%', 'リフォロー', 'フォロバ', 'アフィリ',
+            'なりきり', '非公式',
+        );
+        foreach(array($user->name, $user->description) as $str) {
+            $str = strtolower(mb_convert_kana($str, 'asKV', 'UTF-8'));
+            foreach($blacklist as $blackstr) {
+                if(strpos($str, $blackstr) !== false) {
+                    Yii::log(__METHOD__ . '(): ブラックリストマッチ: ' . $blackstr, 'error', self::LOGCAT);
+                    return 1;
+                }
+            }
+        }
 
         $client = new Twitter($screen_name);
         $client->init();
