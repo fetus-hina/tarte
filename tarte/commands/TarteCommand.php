@@ -99,8 +99,9 @@ class TarteCommand extends CConsoleCommand {
         }
         $blacklist = array(
             'follow back', 'follow me', 'followback', 'followme', 'sougofollow', 'unofficial',
-            'なりきり', 'アフィリ', 'クラウド', 'ニュース', 'フォロバ', 'ベンチャー', 'リフォロー',
-            '副業', '相互100%', '相互フォロー', '相互垢', '自動でツイート', '起業', '非公式',
+            'なりきり', 'ふぉろば', 'アフィリ', 'クラウド', 'ダイエット', 'ニュース', 'フォロバ',
+            'ベンチャー', 'リフォロー', '副業', '相互100%', '相互フォロー', '相互垢', '自動でツイート',
+            '起業', '非公式',
         );
         foreach(array($user->name, $user->description) as $str) {
             $str = strtolower(mb_convert_kana($str, 'asKV', 'UTF-8'));
