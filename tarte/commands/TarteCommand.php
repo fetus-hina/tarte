@@ -86,14 +86,21 @@ class TarteCommand extends CConsoleCommand {
             return 1;
         }
         if($user->protected) {
-            Yii::log(__METHOD__ . '(): user が protected なのでフォローしません', 'error', self::LOGCAT);
+            Yii::log(__METHOD__ . '(): user が protected なのでフォローしません', 'info', self::LOGCAT);
             return 1;
         }
-
+        if(trim($user->description) == '') {
+            Yii::log(__METHOD__ . '(): description が空なのでフォローしません', 'info', self::LOGCAT);
+            return 1;
+        }
+        if(!preg_match('/[ぁ-ゟ]/u', $user->description) && !preg_match('/[゠-ヿ]/u', $user->description)) {
+            Yii::log(__METHOD__ . '(): description に平仮名・片仮名を含まないためフォローしません', 'info', self::LOGCAT);
+            return 1;
+        }
         $blacklist = array(
-            'followback', 'follow back', 'followme', 'follow me', 'sougofollow',
-            '相互フォロー', '相互100%', 'リフォロー', 'フォロバ', 'アフィリ',
-            'なりきり', '非公式',
+            'follow back', 'follow me', 'followback', 'followme', 'sougofollow', 'unofficial',
+            'なりきり', 'アフィリ', 'クラウド', 'ニュース', 'フォロバ', 'ベンチャー', 'リフォロー',
+            '副業', '相互100%', '相互フォロー', '相互垢', '自動でツイート', '起業', '非公式',
         );
         foreach(array($user->name, $user->description) as $str) {
             $str = strtolower(mb_convert_kana($str, 'asKV', 'UTF-8'));
