@@ -89,6 +89,10 @@ class TarteCommand extends CConsoleCommand {
             Yii::log(__METHOD__ . '(): user が protected なのでフォローしません', 'info', self::LOGCAT);
             return 1;
         }
+        if($user->statuses_count < 100) {
+            Yii::log(__METHOD__ . '(): ツイートが少なすぎるのでフォローしません', 'info', self::LOGCAT);
+            return 1;
+        }
         if(trim($user->description) == '') {
             Yii::log(__METHOD__ . '(): description が空なのでフォローしません', 'info', self::LOGCAT);
             return 1;
