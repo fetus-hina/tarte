@@ -42,6 +42,16 @@ class Twitter extends CComponent {
         );
     }
 
+    public function friendshipsDestroy($user_id) {
+        return $this->asUser(
+            $this->callApiPost(
+                'https://api.twitter.com/1.1/friendships/destroy.json',
+                array(),
+                array('user_id' => $user_id)
+            )
+        );
+    }
+
     private function callApiGet($url, array $params, $retry = 3) {
         return $this->callApi('GET', $url, $params, array(), $retry);
     }

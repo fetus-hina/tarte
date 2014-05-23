@@ -146,6 +146,15 @@ class TarteCommand extends CConsoleCommand {
                 //Yii::log(__METHOD__ . '(): 他人へのリプライ', 'info', self::LOGCAT);
                 return 0;
             }
+            if(stripos($parsed->text, 'tartecmd:') !== false) {
+                Yii::log(__METHOD__ . '(): ' . $parsed->text, 'info');
+                if(preg_match('/\btartecmd:\s*remove\s*me\b/i', trim($parsed->text))) {
+                    $client = new Twitter($screen_name);
+                    $client->init();
+                    $client->friendshipsDestroy($status->user->id);
+                }
+                return 0;
+            }
             $dictionary = Dictionary::factory($screen_name);
             if(!$candidate = $dictionary->getReply($status)) {
                 return 0;
