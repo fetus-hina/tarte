@@ -141,6 +141,10 @@ class TarteCommand extends CConsoleCommand {
             //Yii::log(__METHOD__ . '(): URLを含むので無視', 'info', self::LOGCAT);
             return 0;
         }
+        if(strpos($status->text, '#') !== false) {
+            //Yii::log(__METHOD__ . '(): ハッシュタグを含むので無視', 'info', self::LOGCAT);
+            return 0;
+        }
         if($status->user && $status->user->protected) {
             //Yii::log(__METHOD__ . '(): protected userを無視', 'info', self::LOGCAT);
             return 0;
