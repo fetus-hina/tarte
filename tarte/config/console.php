@@ -61,5 +61,9 @@ return array(
         'mecab'     => '/usr/local/bin/mecab',
         'accounts'  => require(__DIR__ . '/accounts.php'),
         'twitpic'   => require(__DIR__ . '/twitpic.php'),
+        'wakuflow'  => array(
+            'path' => 'application.runtime.wakuflow',
+            'url'  => 'https://wakuflow.fetus.jp/',
+        ),
     ),
 );

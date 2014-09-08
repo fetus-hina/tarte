@@ -173,21 +173,35 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         if(!$wakuflow->proc($tmp_in, $tmp_out, implode("\n", $commands))) {
             @unlink($tmp_out);
             @unlink($tmp_in);
-            return '(わーくフローの処理に失敗)';
+            Yii::log(sprintf(
+                    '%s(): わーくフロー呼び出し失敗: %s, %s, %s',
+                    __METHOD__,
+                    $tmp_in, $tmp_out, implode('/', $commands)
+            ));
+            return '(わーくフローの処理に失敗: コマンド内部エラー)';
         }
 
-        $twitpic = new Twitpic();
-        if(!$url = $twitpic->upload(Yii::app()->params['twitpic'], '', $tmp_out)) {
-            @unlink($tmp_out);
-            @unlink($tmp_in);
-            return '(画像アップロードに失敗)';
+        $save_dir = Yii::getPathOfAlias(Yii::app()->params['wakuflow']['path']);
+        if(!file_exists($save_dir)) {
+            mkdir($save_dir, 0755, true);
         }
-        @unlink($tmp_out);
-        @unlink($tmp_in);
-        return $url;
+        do {
+            $save_path = $save_dir . '/' .
+                         substr(hash('sha512', getmypid() . '@' . php_uname('n') . '@' . microtime(false)), 0, 8) .
+                         '.png';
+        } while(file_exists($save_path));
+        $cmdline = '/usr/bin/env ' . escapeshellarg('/usr/bin/pngcrush') . ' -rem alla -brute ' . escapeshellarg($tmp_out) . ' ' . escapeshellarg($save_path);
+        @exec($cmdline, $line, $status);
+	@unlink($tmp_out);
+	@unlink($tmp_in);
+        if($status == 0) {
+            return Yii::app()->params['wakuflow']['url'] . 'p/' . basename($save_path);
+        }
+        @unlink($save_path);
+        return '(画像の保存に失敗)';
     } catch(Exception $e) {
         @unlink($tmp_out);
         @unlink($tmp_in);
-        return '(わーくフローの処理に失敗)';
+        return '(わーくフローの処理に失敗: 例外)';
     }
 }
