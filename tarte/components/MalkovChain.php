@@ -48,8 +48,8 @@ class MalkovChain {
                 'text1'     => $words[$i],
                 'text2'     => $words[$i + 1],
                 'text3'     => isset($words[$i + 2]) ? $words[$i + 2] : null,
-                'is_start'  => $i === 0 ? 't' : 'f',
-                'is_reply'  => $is_reply ? 't' : 'f',
+                'is_start'  => $i === 0 ? '1' : '0',
+                'is_reply'  => $is_reply ? '1' : '0',
                 'time'      => $time,
             );
             if($model = MalkovWord::model()->findByAttributes($data)) {
