@@ -8,9 +8,17 @@ function plugin_shindanmaker(TwStatus $status = null, DictionaryCandidate $candi
             ? $match[0]
             : $status->user->screen_name;
 
+    if(preg_match('/^a(\d+)$/', trim($params[0]), $match)) {
+        $prefix = 'a/';
+        $id = (int)$match[1];
+    } else {
+        $prefix = '';
+        $id = (int)$params[0];
+    }
+
     $client = HttpClient::factory();
     $resp = $client
-        ->setUri(sprintf('http://shindanmaker.com/%d', (int)$params[0]))
+        ->setUri(sprintf('http://shindanmaker.com/%s%d', $prefix, $id))
         ->setMethod(Zend_Http_Client::POST)
         ->setEncType(Zend_Http_Client::ENC_FORMDATA)
         ->setParameterPost(array('u' => trim($screen_name), 'from' => ''))
