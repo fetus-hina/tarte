@@ -7,8 +7,11 @@ function plugin_next_prime(TwStatus $status = null, DictionaryCandidate $candida
         throw new CException('precondition failed');
     }
 
-    if(!preg_match('/\b\d{1,100}\b/', $status->parsed->text, $match)) {
+    if(!preg_match('/[+-]?\d+/', $status->parsed->text, $match)) {
         return '対象の数値がみつかりません';
+    }
+    if(strlen(ltrim($match[0], '+-')) > 100) {
+        return '100桁以下で指定してください';
     }
 
     $gmp = gmp_init($match[0]);
