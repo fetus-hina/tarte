@@ -78,7 +78,7 @@ class YahooWeather {
             '北', '北北東', '北東', '東北東', '東', '東南東', '南東', '南南東',
             '南', '南南西', '南西', '西南西', '西', '西北西', '北西', '北北西',
         ];
-        return sprintf('%sの風%dm', $compass_map[$compass16], round($speed));
+        return sprintf('%sの風%dm/s', $compass_map[$compass16], round($speed));
     }
 
     static private function formatWeather($code, $fallback) {
