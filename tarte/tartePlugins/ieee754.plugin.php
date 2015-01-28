@@ -12,7 +12,7 @@ function plugin_ieee754(TwStatus $status = null, DictionaryCandidate $candidate,
                 '[Ee]' .
                 '[+-]?[[:digit:]]+';
     $in_fmt_f = '[+-]?' .
-                '(?:[[:digit:]]+|[[:digit:]]+\.[[:digit:]]*|[[:digit:]]*\.[[:digit:]]+)';
+                '(?:[[:digit:]]+\.[[:digit:]]*|[[:digit:]]*\.[[:digit:]]+|[[:digit:]]+)';
     $in_fmt_num = "(?:{$in_fmt_e})|(?:{$in_fmt_f})";
     $in_fmt_inf = '[+-]?INF';
     $in_fmt_nan = 'NaN';
