@@ -28,7 +28,7 @@ class TwStatus extends TwitterModel {
     // }
 
     public function getCoordinates() {
-        return $this->fetchObject('coodinates', 'TwCoodinates');
+        return $this->fetchObject('coordinates', 'TwCoordinates');
     }
 
     // public function getCurrentUserRetweet() { // obj
