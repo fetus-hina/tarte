@@ -45,6 +45,7 @@ abstract class TwitterModel extends CModel {
                         switch($proptype) {
                         case 'id':   return $this->fetchString($propname . '_str'); // id の代わりに id_str を使う
                         case 'int':  return $this->fetchInteger($propname);
+                        case 'float':return $this->fetchFloat($propname);
                         case 'bool': return $this->fetchBoolean($propname);
                         case 'str':  return $this->fetchString($propname);
                         case 'time': return $this->fetchDatetime($propname);
@@ -63,6 +64,10 @@ abstract class TwitterModel extends CModel {
 
     protected function fetchInteger($key) {
         return $this->fetch($key, function($v) { return (int)$v; });
+    }
+
+    protected function fetchFloat($key) {
+        return $this->fetch($key, function($v) { return (double)$v; });
     }
 
     protected function fetchBoolean($key) {

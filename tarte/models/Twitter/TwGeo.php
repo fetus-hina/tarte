@@ -1,10 +1,10 @@
 <?php
 class TwGeo extends TwitterModel {
     public function getLongitude() {
-        return $this->fetchInteger(0);
+        return $this->fetchFloat(0);
     }
 
     public function getLatitude() {
-        return $this->fetchInteger(1);
+        return $this->fetchFloat(1);
     }
 }
