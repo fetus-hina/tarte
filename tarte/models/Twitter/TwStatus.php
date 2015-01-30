@@ -12,6 +12,12 @@ class TwStatus extends TwitterModel {
         );
     }
 
+    public function getText() {
+        $text = $this->fetchString('text');
+        $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+        return $text;
+    }
+
     // public function getContributors() { // object array
     // }
 

@@ -62,7 +62,12 @@ class UserStreamEventHandler extends CComponent {
             try {
                 $parsed = $status->parsed;
                 $text   = trim($parsed->text);
-                if($text != '' && stripos($text, 'http://') === false && stripos($text, 'https://') === false) {
+                if($text != '' &&
+                   stripos($text, 'http://') === false &&
+                   stripos($text, 'https://') === false &&
+                   !$parsed->getRetweet())
+                {
+                    Yii::log(__METHOD__ . '(): マルコフ連鎖学習「' . $text . '」', 'info', self::LOGCAT);
                     MalkovChain::saveText(
                         $this->screen_name,
                         $parsed->hasMension(),
