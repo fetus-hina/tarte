@@ -20,7 +20,7 @@ function plugin_yahoo_weather(TwStatus $status = null, DictionaryCandidate $cand
         return '気象情報の取得に失敗しました';
     }
     return sprintf(
-        '%s現在の%sの天気は%s、気温%s、湿度%s、%s、気圧%s、明日の天気は%s、最低気温%s、最高気温%sです',
+        '%s現在の%sの天気は%s、気温%s、湿度%s、%s、気圧%s(%.3f気圧)、明日の天気は%s、最低気温%s、最高気温%sです',
         $ret['updated_at'] === false ? '' : date('H:i', $ret['updated_at']),
         $location,
         $ret['now']['weather'],
@@ -28,6 +28,7 @@ function plugin_yahoo_weather(TwStatus $status = null, DictionaryCandidate $cand
         $ret['now']['humidity'],
         $ret['now']['wind'],
         $ret['now']['pressure'],
+        $ret['now']['pressure'] / 1013.25,
         $ret['tomorrow']['weather'],
         $ret['tomorrow']['temp_l'],
         $ret['tomorrow']['temp_h']
