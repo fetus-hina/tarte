@@ -27,12 +27,13 @@ function plugin_yahooj_weather__formatll(array $label, $value) {
     $label_index = $value < 0 ? 1 : 0;
     $value = abs($value);
 
-    $deg = floor($value);
-    $value = ($value - $deg) * 60;
-    $min = floor($value);
-    $value = ($value - $min) * 60;
-    $sec = round($value);
-    return sprintf('%s%d度%d分%d秒', $label[$label_index], $deg, $min, $sec);
+    $tmp = round($value * 60 * 600);
+    $sec = ($tmp % 600) / 10;
+    $tmp = floor($tmp / 600);
+    $min = $tmp % 60;
+    $deg = floor($tmp / 60);
+
+    return sprintf('%s%d度%02d分%02.1f秒', $label[$label_index], $deg, $min, $sec);
 }
 
 function plugin_yahooj_weather__placeinfo($lat, $lon) {
