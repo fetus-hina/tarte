@@ -131,9 +131,10 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
         
         $pixelate_regex = 'モザイク\s*(\d+)?';
         $animal_regex = 'ごはん\s*(?:「(.+?)」\s*「(.+?)」)?';
+        $brain_regex = '脳\s*「(.+?)」';
 
         $commands = array();
-        if(!preg_match_all("/{$pixelate_regex}|{$animal_regex}|{$simple_wakuflow_regex}/u", $status->parsed->text, $matches, PREG_SET_ORDER)) {
+        if(!preg_match_all("/{$pixelate_regex}|{$animal_regex}|{$brain_regex}|{$simple_wakuflow_regex}/u", $status->parsed->text, $matches, PREG_SET_ORDER)) {
             @unlink($tmp_out);
             @unlink($tmp_in);
             return '(わーくフローの解析に失敗)';
@@ -166,7 +167,17 @@ function plugin_wakuflow(TwStatus $status = null, DictionaryCandidate $candidate
                     $text2 = isset($smatch[2]) ? $smatch[2] : sprintf('@%s is not your food prodcts.', $status->user->screen_name);
                     //                                                                      ^^^^^^^ オリジナルに忠実
                     $commands[] = 'animal ' . $animal_text($text1) . ' ' . $animal_text($text2);
-                }
+                } elseif(preg_match("/^{$brain_regex}$/u", $match[0], $smatch)) {
+                    // 水槽の脳
+                    $tmp = array();
+                    foreach (explode('\n', $smatch[1]) as $line) {
+                        $line = trim($line);
+                        if ($line !== '') {
+                            $tmp[] = $animal_text($line);
+                        }
+                    }
+                    $commands[] = 'brain ' . implode(' ', $tmp);
+	    	}
             }
         }
         $wakuflow = Yii::app()->wakuflow;
